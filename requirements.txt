@@ -4,8 +4,8 @@ numpy
 datetime
 sklearn
 matplotlib
-tf.keras.models
 keras
+keras.models
 pyswarms
 scipy
 gunicorn
