@@ -2,7 +2,7 @@ Flask
 pandas
 numpy
 datetime
-sklearn.preprocessing
+sklearn
 matplotlib
 keras.models
 keras
