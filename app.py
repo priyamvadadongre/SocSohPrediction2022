@@ -14,6 +14,11 @@ from sklearn.model_selection import train_test_split
 from datetime import datetime
 app = Flask(__name__)
 
+@app.route('/')
+def mainpage():
+    import gasoc
+    import gasoh
+    return render_template('main.html')
 
 @app.route('/svr')
 def svr():
