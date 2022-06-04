@@ -6,5 +6,4 @@ sklearn
 matplotlib
 keras
 pyswarms
-operator
 scipy
