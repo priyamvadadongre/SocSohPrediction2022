@@ -5,7 +5,7 @@ sklearn
 matplotlib
 keras
 keras.models
-tensorflow
+tensorflow-cpu
 pyswarms
 gunicorn
 
