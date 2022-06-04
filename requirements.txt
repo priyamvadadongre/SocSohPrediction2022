@@ -1,13 +1,11 @@
-python==3.9.10
 Flask
 pandas
 numpy
-datetime
 sklearn
 matplotlib
 keras
 keras.models
+tensorflow
 pyswarms
-scipy
 gunicorn
 
