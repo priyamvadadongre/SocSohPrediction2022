@@ -4,7 +4,7 @@ numpy
 datetime
 sklearn
 matplotlib
-tensorflow.python
+keras.models
 keras
 pyswarms
 scipy
