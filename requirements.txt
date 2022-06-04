@@ -9,7 +9,3 @@ keras
 pyswarms
 scipy
 gunicorn
-itsdangerous
-Jinja2
-MarkupSafe
-Werkzeug
