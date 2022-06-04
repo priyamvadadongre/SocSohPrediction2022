@@ -5,7 +5,7 @@ sklearn
 matplotlib
 keras
 keras.models
-tensorflow-cpu
+tensorflow-cpu==2.6.0
 pyswarms
 gunicorn
 
