@@ -437,8 +437,7 @@ def rfsoh():
     return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
 
 
-    
-    
-if __name__ == '__main__':
-    app.run()
+
+if __name__ == "__main__":
+    app.run(debug=True)
        
