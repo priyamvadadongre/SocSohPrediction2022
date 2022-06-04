@@ -43,8 +43,10 @@ def svr():
     
     y_prediction1 =  regressor.predict(X_test1)
     
-    y_prediction2 = sc_y.inverse_transform(y_prediction1)
-    actual_soh = sc_y.inverse_transform(y_test1)
+#     y_prediction2 = sc_y.inverse_transform(y_prediction1)
+    y_prediction2 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
+
+    actual_soh = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
     
     sortto=x_test_orig
 
