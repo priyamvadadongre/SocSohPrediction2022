@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SOH PREDICTION</title>
+  </head>
+  <body>
+  <h2>NN SOC</h2>
+  <table>
+  <thead>
+  <!--<th>TimeStamp &nbsp</th>-->
+  <th>TimeStamp</th>
+  <th>Voltage</th>
+  <th>Current</th>
+  <th>Actual SOC</th>
+  <th>NN-SOC Prediction</th>
+  <thead>
+  <tbody>
+{% for i in range(length) %}
+<tr>
+    {%for j in range(0,3)%}
+<td>    {{data[i][j]}}&nbsp&nbsp&nbsp</td>
+    {%endfor%}
+    <td>{{soh[i][0]}}&nbsp&nbsp&nbsp</td>
+<td>{{pred[i][0]}}</td>
+      <tr>
+{% endfor %}
+<tbody>
+  </body>
+</html>
