@@ -9,4 +9,4 @@ keras
 pyswarms
 scipy
 gunicorn
-tf2
+tensorflow
