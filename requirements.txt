@@ -1,0 +1,11 @@
+Flask
+pandas
+numpy
+datetime
+sklearn
+matplotlib
+keras
+pyswarms
+random
+operator
+scipy
