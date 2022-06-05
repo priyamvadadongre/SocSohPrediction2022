@@ -4,7 +4,6 @@ Created on Mon May 23 19:18:26 2022
 
 @author: home
 """
-
 from flask import Flask,render_template
 import pandas as pd
 import numpy as np
