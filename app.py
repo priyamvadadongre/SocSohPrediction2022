@@ -354,15 +354,59 @@ def gasoh():
     x_data_orig=X_data.values.tolist()
     return render_template('nnsoc.html',soh=y_test,data=x_data_orig,pred=predictY,length=len(predictY))
    
-@app.route('/rfsoh')
-def rfsoh():
-    from sklearn import preprocessing
+   
+@app.route('/l2soc')
+def l2soc():
+    from sklearn.linear_model import Ridge
+   
+    df = pd.read_csv("soc.csv")
+    
+    X_data=df.drop(['Relative State of Charge'],axis=1)
+    y_data=df['Relative State of Charge']
+        
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(X_data, y_data, test_size=0.2,random_state=50)
+    X_testwithTimeStamp1=X_test1
+    x_test_origSOC1=X_testwithTimeStamp1.values.tolist()
+    X_train1=X_train1.drop(['TimeStamp'],axis=1)
+    X_test1=X_test1.drop(['TimeStamp'],axis=1)
+    
+    sc_x = StandardScaler()
+    sc_y = StandardScaler()
+    X_train1 = sc_x.fit_transform(X_train1)
+    X_test1 = sc_x.transform(X_test1)
+    y_train1 = sc_y.fit_transform(np.array(y_train1).reshape(-1,1))
+    y_test1 = sc_y.transform(np.array(y_test1).reshape(-1,1))
+    ridge_reg=Ridge(alpha=50,max_iter=100,tol=0.1)
+    ridge_reg.fit(X_train1,y_train1)  
+    y_prediction1 =  ridge_reg.predict(X_test1)
+    actual_soc = sc_y.inverse_transform(y_test1)
+    y_prediction1 = sc_y.inverse_transform(y_prediction1)
+    print(y_prediction1)
+    sortto=x_test_origSOC1
+    print(len(y_prediction1))
+    print(len(x_test_origSOC1[0]))
+    for i in range(len(y_prediction1)):
+        sortto[i].append(actual_soc[i][0])
+        sortto[i].append(y_prediction1[i])
+    print(sortto)
+    
+    #for i in range(len(sortto)):
+     #       sortto[i][0]=datetime.strftime(datetime.strptime(sortto[i][0],'%Y-%m-%d %H:%M:%S.%f'),'%Y-%m-%d %H:%M:%S.%f')
+            
+    from operator import itemgetter
+    outputlist=sorted(sortto,key=itemgetter(0))
+    print("out:::",outputlist)
+    return render_template('l2soc.html',sortto=outputlist,length=len(sortto))
+    
+@app.route('/l2soh')
+def l2soh():
     df = pd.read_csv("soh_1.csv")    
     #df.describe()
     X_data=df.drop(['soh'],axis=1)
     y_data=df['soh']
-    X_train1, X_test1, y_train1, y_test1 = train_test_split(X_data, y_data, test_size=0.2,random_state=1,shuffle=False)
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(X_data, y_data, test_size=0.2,random_state=1)
     x_test_orig=X_test1
+  
     x_test_orig=x_test_orig.values.tolist()
     
     X_train1=X_train1.drop(['TimeStamp'],axis=1)
@@ -373,14 +417,35 @@ def rfsoh():
     X_test1 = sc_x.transform(X_test1)
     y_train1 = sc_y.fit_transform(np.array(y_train1).reshape(-1,1))
     y_test1 = sc_y.transform(np.array(y_test1).reshape(-1,1))
-    from sklearn.ensemble import RandomForestRegressor
-    rf=RandomForestRegressor()
-    model = rf.fit(X_train1,y_train1)
+    print("actual ytest",y_test1)
+    from sklearn.linear_model import Ridge
+    ridge_reg=Ridge(alpha=50,max_iter=100,tol=0.1)
+    ridge_reg.fit(X_train1,y_train1) 
+    y_prediction1 =  ridge_reg.predict(X_test1)
+    
+    
+    y_prediction2 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
+    print("inverse trans pred:",y_prediction2)
+    actual_soh = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
+    print("actual:",actual_soh)
+    
+    sortto=x_test_orig
 
-    y_test_predict=model.predict(X_test1)
-    y_prediction2 = sc_y.inverse_transform(y_test_predict)
-    actual_soh = sc_y.inverse_transform(y_test1)
-    return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
+    for i in range(len(y_prediction2)):
+        sortto[i].append(actual_soh[i][0])
+        sortto[i].append(y_prediction2[i])
+    
+    #for i in range(len(sortto)):
+     #       sortto[i][0]=datetime.strftime(datetime.strptime(sortto[i][0],'%Y-%m-%d %H:%M:%S.%f'),'%Y-%m-%d %H:%M:%S.%f')
+            
+    from operator import itemgetter
+    outputlist=sorted(sortto,key=itemgetter(0))
+   
+            
+    #return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
+    return render_template('home.html',sortto=outputlist,length=len(sortto))
+
+
 
 
 
