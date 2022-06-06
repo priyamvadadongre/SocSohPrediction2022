@@ -15,8 +15,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def mainpage():
-    import gasoc
-    import gasoh
     return render_template('main.html')
 
 @app.route('/svr')
