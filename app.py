@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from datetime import datetime
-import nnsoc
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -229,6 +229,7 @@ def svrsoc():
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @app.route('/nnsoci')
 def nnsoci():
+    import nnsoc
     import numpy as np
     import pandas as pd
     import matplotlib.pyplot as plt
