@@ -445,6 +445,37 @@ def l2soh():
     #return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
     return render_template('home.html',sortto=outputlist,length=len(sortto))
 
+    
+
+@app.route('/mlstmsoh')
+def mlstmsoh():
+    import pickle
+    with open('mlstmsoh.txt','rb') as f:
+        inv_y=pickle.load(f)
+   
+    with open('mlstmsohpred.txt','rb') as f:
+        inv_yhat=pickle.load(f)
+  
+      
+    with open('mlstmsohx.txt','rb') as f:
+        x_data_orig=pickle.load(f)
+    return render_template('mlstmsoh.html',soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
+
+
+@app.route('/mlstmsoc')
+def mlstmsoc():
+    import pickle
+    with open('mlstmsoc.txt','rb') as f:
+        inv_y=pickle.load(f)
+   
+    with open('mlstmsocpred.txt','rb') as f:
+        inv_yhat=pickle.load(f)
+  
+      
+    with open('mlstmsocx.txt','rb') as f:
+        x_data_orig=pickle.load(f)
+    return render_template('mlstmsoh.html',soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
+
 
 
 
