@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SOH PREDICTION</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='./styles/home.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = './js/ani.js') }}"></script>
 
+    <title>SOH PREDICTION</title>
   </head>
   <body>
-  <h2>SOH PREDICTION</h2>
+  <h2>SVR SOH Prediction</h2>
+    <h4>TimeStamp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbspVoltage Current&nbsp Actual &nbsp Predicted</h4>
+
   <table>
-  <thead>
-  <th>TimeStamp &nbsp</th>
-  <th>Voltage &nbsp</th>
-  <th>Current &nbsp</th>
-  <th>Actual &nbsp</th>
-  <th>SVR Prediction &nbsp</th>
   <thead>
   <tbody>
 {% for i in range(length) %}
@@ -27,6 +26,6 @@
 <td>{{sortto[i][9][0]}} &nbsp</td>
 </tr> 
 {% endfor %}
-<tbody>
+</tbody>
   </body>
 </html>
