@@ -13,7 +13,7 @@ import random
 from pandas import DataFrame
 from pandas import concat
 from sklearn.preprocessing import MinMaxScaler
-import pickle   
+    
 from scipy.optimize import differential_evolution
     
 from sklearn.compose import ColumnTransformer
@@ -108,6 +108,7 @@ cost , pos, history = train(options)
 y_pred = predict(x_test, pos)
 y_pred= scaler.inverse_transform(y_pred)
 y_test = scaler.inverse_transform(y_test)
+import pickle
 file=open("nnsoc.txt","wb")
 pickle.dump(y_pred,file)
 file.close()
