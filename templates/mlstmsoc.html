@@ -205,7 +205,7 @@ color:red;}
           </header>
     </div>
     <div class="model">
-        <h2>Support Vector Regression Model (SOH Prediction)</h2>
+        <h2>Multivariate LSTM (SOC Prediction)</h2>
     </div>
 
     <section id="main">
@@ -254,7 +254,7 @@ color:red;}
             <img src="./static/images/clock.gif" height="150" width="150"/>
             </div>
         
-       <p style="border:black 2px solid; border-style:outset;" class="forloop6" index={{i}}> {{sortto[i][0][:10]}} </br> {{sortto[i][0][10:]}} </p>
+       <p style="border:black 2px solid; border-style:outset;" class="forloop6" index={{i}}> {{data[i][0][:10]}} </br> {{data[i][0][10:]}} </p>
     </section>
     
     <section class="section-3">
@@ -264,7 +264,7 @@ color:red;}
         </div>
        
 
- <p class="forloop1"  style="border:black 2px solid; border-style:outset;" index={{i}}> {{sortto[i][4]}} </p>
+ <p class="forloop1"  style="border:black 2px solid; border-style:outset;" index={{i}}> {{data[i][4]}} </p>
      </section>
     <section class="section-4">
      
@@ -274,7 +274,7 @@ color:red;}
        
                
 
-      <p class="forloop2" style="border:black 2px solid; border-style:outset;" index={{i}}> {{sortto[i][1]}} </p>
+      <p class="forloop2" style="border:black 2px solid; border-style:outset;" index={{i}}> {{data[i][1]}} </p>
     </section>
     <section class="section-5">
      
@@ -284,19 +284,19 @@ color:red;}
        
                
 
-   <p class="forloop3"  style="border:black 2px solid; border-style:outset;" index={{i}}> {{sortto[i][2]}}  </p>
+   <p class="forloop3"  style="border:black 2px solid; border-style:outset;" index={{i}}> {{data[i][2]}}  </p>
        </section>
     <section class="flowerbracket">
         <img src="./static/images/close-bracket.png" height="500" width="200" ></img>
     </section>
     <section class = "section-6">
         <h2> Actual&nbsp SOC&nbsp&nbsp&nbsp&nbsp&nbsp</h2>
-     <p class="forloop4"  style="border:black 2px solid; border-style:outset;" index={{i}}>  {{sortto[i][7]}}  </p>
+     <p class="forloop4"  style="border:black 2px solid; border-style:outset;" index={{i}}>  {{soh[i]*10}}  </p>
     </section>
     <section class = "section-7">
         <h2>Predicted SOC</h2>
        
- <p class="forloop5"  style="border:black 2px solid; border-style:outset;" id="loop5" index={{i}}>   {{sortto[i][8]}} </p>
+ <p class="forloop5"  style="border:black 2px solid; border-style:outset;" id="loop5" index={{i}}>   {{pred[i]*10}} </p>
         
      </section>
         <section class = "section-8">

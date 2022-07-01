@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Model
+from keras.models import load_model
 import matplotlib.pyplot as plt
 
 import pyswarms as ps

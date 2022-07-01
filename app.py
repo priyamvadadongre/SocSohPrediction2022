@@ -4,6 +4,7 @@ Created on Mon May 23 19:18:26 2022
 
 @author: home
 """
+
 from flask import Flask,render_template
 import pandas as pd
 import numpy as np
@@ -11,15 +12,42 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from datetime import datetime
-
 app = Flask(__name__)
 
 @app.route('/')
-def mainpage():
+def home():
+    return render_template('home.html')
+    
+@app.route('/models')
+def models():
     return render_template('main.html')
+    
+@app.route('/graph')
+def graph():
+    return render_template('graph.html')
+    
+@app.route('/aboutUs')
+def about():
+    return render_template('about.html')
+    
+    
+@app.route('/report')
+def report():
+    return render_template('report.html')
+      
+    
+@app.route('/graphforSOH')
+def graphforSOH():
+    return render_template('sohgraph.html')
 
-@app.route('/svr')
-def svr():
+    
+@app.route('/graphforSOC')
+def graphforSOC():
+    return render_template('socgraph.html')
+
+
+@app.route('/svrsoh')
+def svrsoh(): 
     #SVR MODEL-SOH
     df = pd.read_csv("soh_1.csv")    
     #df.describe()
@@ -29,16 +57,15 @@ def svr():
     x_test_orig=X_test1
   
     x_test_orig=x_test_orig.values.tolist()
-    
     X_train1=X_train1.drop(['TimeStamp'],axis=1)
     X_test1=X_test1.drop(['TimeStamp'],axis=1)
+   
     sc_x = StandardScaler()
     sc_y = StandardScaler()
     X_train1 = sc_x.fit_transform(X_train1)
     X_test1 = sc_x.transform(X_test1)
     y_train1 = sc_y.fit_transform(np.array(y_train1).reshape(-1,1))
     y_test1 = sc_y.transform(np.array(y_test1).reshape(-1,1))
-    
     regressor = SVR(kernel = 'rbf')
     regressor.fit(X_train1,y_train1)
     
@@ -46,9 +73,8 @@ def svr():
     
     y_prediction1 =  regressor.predict(X_test1)
     
-#     y_prediction2 = sc_y.inverse_transform(y_prediction1)
+    
     y_prediction2 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
-
     actual_soh = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
     
     sortto=x_test_orig
@@ -62,10 +88,16 @@ def svr():
             
     from operator import itemgetter
     outputlist=sorted(sortto,key=itemgetter(0))
-   
+    status=[]
+    for i in range(len(outputlist)):
+        if(outputlist[i][9][0]>0.75):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be replaced")
+    print("status array : ",status)
             
     #return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
-    return render_template('home.html',sortto=outputlist,length=len(sortto))
+    return render_template('svrsoh.html',batterystatus=status,sortto=outputlist,length=len(sortto))
 @app.route('/svrsoc')
 def svrsoc(): 
     #SVR MODEL-SOC
@@ -93,14 +125,14 @@ def svrsoc():
     y_prediction1 =  regressor.predict(X_test1)
     
     
-    actual_soc = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
+    actual_soc = sc_y.inverse_transform(y_test1)
     
     print(y_test1)
 
 
 
-    y_prediction1 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
-    print(y_prediction1)
+    y_prediction1 = sc_y.inverse_transform(y_prediction1)
+    print("ypred:",y_prediction1)
     sortto=x_test_origSOC1
     print(len(y_prediction1))
     print(len(x_test_origSOC1[0]))
@@ -115,14 +147,68 @@ def svrsoc():
     from operator import itemgetter
     outputlist=sorted(sortto,key=itemgetter(0))
     print("out:::",outputlist)
-    return render_template('svrsoc.html',sortto=outputlist,length=len(sortto))
+    status=[]
+    for i in range(len(outputlist)):
+        if(outputlist[i][8]>25):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be charged")
+    print("status array : ",status)
+            
+    return render_template('svrsoc.html',batterystatus=status,sortto=outputlist,length=len(sortto))
+    
     #return render_template('home.html',soh=y_test1,data=x_test_origSOC1,pred=y_prediction1,length=len(y_prediction1))
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@app.route('/mlstmsoh')
+def mlstmsoh():
+    import pickle
+    with open('mlstmsoh.txt','rb') as f:
+        inv_y=pickle.load(f)
+   
+    with open('mlstmsohpred.txt','rb') as f:
+        inv_yhat=pickle.load(f)
+  
+      
+    with open('mlstmsohx.txt','rb') as f:
+        x_data_orig=pickle.load(f)
+    status=[] 
+    for i in range(len(inv_yhat)):
+        if(inv_yhat[i]>0.74):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be replaced")
+    print("status array : ",status)
+    return render_template('mlstmsoh.html',batterystatus=status,soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
+
+
+@app.route('/mlstmsoc')
+def mlstmsoc():
+    import pickle
+    with open('mlstmsoc.txt','rb') as f:
+        inv_y=pickle.load(f)
+   
+    with open('mlstmsocpred.txt','rb') as f:
+        inv_yhat=pickle.load(f)
+  
+      
+    with open('mlstmsocx.txt','rb') as f:
+        x_data_orig=pickle.load(f)
+    
+    status=[]
+    for i in range(len(inv_yhat)):
+        if(inv_yhat[i]>2.5):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be charged")
+    print("status array : ",status)
+    return render_template('mlstmsoc.html',batterystatus=status,soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
+
+
+
+
+
 @app.route('/nnsoc')
 def nnsoc():
     import numpy as np
@@ -166,9 +252,20 @@ def nnsoc():
     
     with open('nnsoc.txt','rb') as f:
         y_pred=pickle.load(f)
-    print("y_pred nnsoc",type(y_pred))
-    return render_template('nnsoc.html',soh=y_test,data=x_data_orig,pred=y_pred,length=len(y_pred))
+    print("y_pred nnsoc",type(x_data_orig))
+    print("y_pred nnsoc",x_data_orig)
+    status=[]
+    for i in range(len(y_pred)):
+        if(y_pred[i]>25):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be charged")
+    print("status array : ",status)
+            
+    return render_template('nnsoc.html',batterystatus=status,soh=y_test,data=x_data_orig,pred=y_pred,length=len(y_pred))
 
+ 
+  
 
 @app.route('/nnsoh')
 def nnsoh():
@@ -201,7 +298,7 @@ def nnsoh():
     values = values.astype('float32')
     df = read_csv('soh_1.csv', header=0)
     X_data=df.drop(['soh'],axis=1)
-    print(X_data[101:])
+    x_data_orig=X_data[100:]
     x_data_orig=X_data.values.tolist()
     # normalize features
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -216,7 +313,6 @@ def nnsoh():
     y = scaler.fit_transform(np.array(y).reshape(-1,1))
     
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0, shuffle = False)
-    print(x_test)
     def cal(n_inputs, n_hidden, n_classes):
         i_weights = n_inputs*n_hidden
         i_bias = n_hidden
@@ -281,8 +377,15 @@ def nnsoh():
     y_pred = predict(x_test, pos)
     y_pred= scaler.inverse_transform(y_pred)
     y_test = scaler.inverse_transform(y_test)
-    
-    return render_template('nnsoc.html',soh=y_test,data=x_data_orig,pred=y_pred,length=len(y_pred))
+    print(y_pred)
+    status=[]
+    for i in range(len(y_pred)):
+        if(y_pred[i]>0.75):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be replaced")
+    print("status array : ",status)
+    return render_template('nnsoh.html',batterystatus=status,soh=y_test,data=x_data_orig,pred=y_pred,length=len(y_pred))
 #////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @app.route('/gasoc')
@@ -317,7 +420,14 @@ def gasoc():
     x_data_orig=X_data[1202:]
     x_data_orig=x_data_orig.values.tolist()
     y_test = scaler.inverse_transform(y_test)
-    return render_template('nnsoc.html',soh=y_test,data=x_data_orig,pred=predictY,length=len(predictY))
+    status=[]
+    for i in range(len(predictY)):
+        if(predictY[i]>25):
+            status.append("Battery in good condition")
+        else:
+           status.append("battery needs to be charged")
+    print("status array : ",status)
+    return render_template('gasoc.html',batterystatus=status,soh=y_test,data=x_data_orig,pred=predictY,length=len(predictY))
 
 @app.route('/gasoh')
 def gasoh():
@@ -326,7 +436,6 @@ def gasoh():
     import numpy as np
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import MinMaxScaler
-    import pickle
     from pandas import read_csv
     from keras.models import load_model
     dataset = pd.read_csv('soh_1.csv', header=0, index_col=0)
@@ -350,10 +459,15 @@ def gasoh():
     df = read_csv('soh_1.csv', header=0)
     
     X_data=df.drop(['soh'],axis=1)
-    print(X_data[101:])
     x_data_orig=X_data.values.tolist()
-    return render_template('nnsoc.html',soh=y_test,data=x_data_orig,pred=predictY,length=len(predictY))
-   
+    status=[]
+    for i in range(len(predictY)):
+        if(predictY[i]>0.75):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be replaced")
+    print("status array : ",status)
+    return render_template('gasoh.html',batterystatus=status,soh=y_test,data=x_data_orig,pred=predictY,length=len(predictY))
    
 @app.route('/l2soc')
 def l2soc():
@@ -381,22 +495,27 @@ def l2soc():
     y_prediction1 =  ridge_reg.predict(X_test1)
     actual_soc = sc_y.inverse_transform(y_test1)
     y_prediction1 = sc_y.inverse_transform(y_prediction1)
-    print(y_prediction1)
+
     sortto=x_test_origSOC1
-    print(len(y_prediction1))
-    print(len(x_test_origSOC1[0]))
     for i in range(len(y_prediction1)):
         sortto[i].append(actual_soc[i][0])
         sortto[i].append(y_prediction1[i])
-    print(sortto)
     
     #for i in range(len(sortto)):
      #       sortto[i][0]=datetime.strftime(datetime.strptime(sortto[i][0],'%Y-%m-%d %H:%M:%S.%f'),'%Y-%m-%d %H:%M:%S.%f')
             
     from operator import itemgetter
     outputlist=sorted(sortto,key=itemgetter(0))
-    print("out:::",outputlist)
-    return render_template('l2soc.html',sortto=outputlist,length=len(sortto))
+    status=[]
+    for i in range(len(outputlist)):
+        if(outputlist[i][8][0]>25):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be charged")
+    print("status array : ",status)
+            
+    return render_template('l2soc.html',batterystatus=status,
+                           sortto=outputlist,length=len(sortto))
     
 @app.route('/l2soh')
 def l2soh():
@@ -417,7 +536,6 @@ def l2soh():
     X_test1 = sc_x.transform(X_test1)
     y_train1 = sc_y.fit_transform(np.array(y_train1).reshape(-1,1))
     y_test1 = sc_y.transform(np.array(y_test1).reshape(-1,1))
-    print("actual ytest",y_test1)
     from sklearn.linear_model import Ridge
     ridge_reg=Ridge(alpha=50,max_iter=100,tol=0.1)
     ridge_reg.fit(X_train1,y_train1) 
@@ -425,9 +543,9 @@ def l2soh():
     
     
     y_prediction2 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
-    print("inverse trans pred:",y_prediction2)
+
     actual_soh = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
-    print("actual:",actual_soh)
+
     
     sortto=x_test_orig
 
@@ -440,46 +558,27 @@ def l2soh():
             
     from operator import itemgetter
     outputlist=sorted(sortto,key=itemgetter(0))
-   
+    status=[]
+    for i in range(len(outputlist)):
+        if(outputlist[i][9][0]>0.75):
+            status.append("Battery in good condition")
+        else:
+            status.append("battery needs to be replaced")
+    print("status array : ",status)
+            
             
     #return render_template('home.html',soh=actual_soh,data=x_test_orig,pred=y_prediction2,length=len(y_prediction2))
-    return render_template('home.html',sortto=outputlist,length=len(sortto))
-
-    
-
-@app.route('/mlstmsoh')
-def mlstmsoh():
-    import pickle
-    with open('mlstmsoh.txt','rb') as f:
-        inv_y=pickle.load(f)
-   
-    with open('mlstmsohpred.txt','rb') as f:
-        inv_yhat=pickle.load(f)
-  
-      
-    with open('mlstmsohx.txt','rb') as f:
-        x_data_orig=pickle.load(f)
-    return render_template('mlstmsoh.html',soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
-
-
-@app.route('/mlstmsoc')
-def mlstmsoc():
-    import pickle
-    with open('mlstmsoc.txt','rb') as f:
-        inv_y=pickle.load(f)
-   
-    with open('mlstmsocpred.txt','rb') as f:
-        inv_yhat=pickle.load(f)
-  
-      
-    with open('mlstmsocx.txt','rb') as f:
-        x_data_orig=pickle.load(f)
-    return render_template('mlstmsoh.html',soh=inv_y,data=x_data_orig,pred=inv_yhat,length=len(inv_yhat))
+    return render_template('l2soh.html',batterystatus=status,sortto=outputlist,length=len(sortto))
 
 
 
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+
+
+
+
+if __name__ == '__main__':
+    app.run()
        
