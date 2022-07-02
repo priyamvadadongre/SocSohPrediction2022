@@ -505,7 +505,8 @@ def l2soc():
      #       sortto[i][0]=datetime.strftime(datetime.strptime(sortto[i][0],'%Y-%m-%d %H:%M:%S.%f'),'%Y-%m-%d %H:%M:%S.%f')
             
     from operator import itemgetter
-    outputlist=sorted(sortto,key=itemgetter(0))
+    outputlist=sorted(sortto,key=itemgetter(0))   
+    del outputlist[0:21]
     status=[]
     for i in range(len(outputlist)):
         if(outputlist[i][8][0]>25):
@@ -515,7 +516,7 @@ def l2soc():
     print("status array : ",status)
             
     return render_template('l2soc.html',batterystatus=status,
-                           sortto=outputlist,length=len(sortto))
+                           sortto=outputlist,length=len(outputlist))
     
 @app.route('/l2soh')
 def l2soh():
