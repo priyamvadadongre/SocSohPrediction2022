@@ -125,13 +125,13 @@ def svrsoc():
     y_prediction1 =  regressor.predict(X_test1)
     
     
-    actual_soc = sc_y.inverse_transform(y_test1)
+    actual_soc = sc_y.inverse_transform(np.array(y_test1).reshape(-1,1))
     
     print(y_test1)
 
 
 
-    y_prediction1 = sc_y.inverse_transform(y_prediction1)
+    y_prediction1 = sc_y.inverse_transform(np.array(y_prediction1).reshape(-1,1))
     print("ypred:",y_prediction1)
     sortto=x_test_origSOC1
     print(len(y_prediction1))
