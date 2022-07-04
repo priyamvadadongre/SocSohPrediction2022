@@ -462,7 +462,7 @@ def gasoh():
     x_data_orig=X_data.values.tolist()
     status=[]
     for i in range(len(predictY)):
-        if(predictY[i]>0.75):
+        if(predictY[i]>0.70):
             status.append("Battery in good condition")
         else:
             status.append("battery needs to be replaced")
